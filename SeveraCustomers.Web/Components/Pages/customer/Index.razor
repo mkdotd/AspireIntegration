@@ -1,0 +1,51 @@
+﻿@page "/customer/index"
+@attribute [StreamRendering(true)]
+@* @attribute [OutputCache(Duration = 5)] *@
+
+@inject ApiClient CustomerApi
+
+<PageTitle>Customer</PageTitle>
+
+<h1>Customer</h1>
+
+<p>This component demonstrates showing data loaded from a backend API service(PostGresdb).</p>
+
+@if (customers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>OwnerName</th>
+                <th>Number</th>
+                <th>Website</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.Name</td>
+                    <td>@customer.OwnerName</td>
+                    <td>@customer.Number</td>
+                    <td>@customer.Website</td>
+                    <td><a href="@($"customer/edit?id={customer.ID}")">Edit</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private Models.Customers[]? customers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = await CustomerApi.GetCustomers();
+    }
+}

@@ -1,0 +1,107 @@
+﻿@page "/customer/edit"
+@using Models
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h2>Customer</h2>
+<hr />
+@if (Customer is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="Customer" OnValidSubmit="UpdateCustomer" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary role="alert"/>
+                <input type="hidden" name="Customer.Id" value="@Customer.ID" />
+                <div class="mb-3">
+                    <label for="title" class="form-label">Name:</label>
+                    <InputText id="title" @bind-Value="Customer.Name" class="form-control" />
+                    <ValidationMessage For="() => Customer.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="releasedate" class="form-label">Number:</label>
+                    <InputDate id="releasedate" @bind-Value="Customer.Number" class="form-control" />
+                    <ValidationMessage For="() => Customer.Number" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="genre" class="form-label">OwnerName:</label>
+                    <InputText id="genre" @bind-Value="Customer.OwnerName" class="form-control" />
+                    <ValidationMessage For="() => Customer.OwnerName" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Website:</label>
+                    <InputNumber id="price" @bind-Value="Customer.Website" class="form-control" />
+                    <ValidationMessage For="() => Customer.Website" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">IndustryName:</label>
+                    <InputNumber id="price" @bind-Value="Customer.IndustryName" class="form-control" />
+                    <ValidationMessage For="() => Customer.IndustryName" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/customer/index">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Customers? Customer { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        // using var context = DbFactory.CreateDbContext();
+        // Customer ??= await context.Movie.FirstOrDefaultAsync(m => m.Id == Id);
+
+        // if (Customer is null)
+        // {
+        //     NavigationManager.NavigateTo("notfound");
+        // }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task UpdateCustomer()
+    {
+        // using var context = DbFactory.CreateDbContext();
+        // context.Attach(Movie!).State = EntityState.Modified;
+
+        // try
+        // {
+        //     await context.SaveChangesAsync();
+        // }
+        // catch (DbUpdateConcurrencyException)
+        // {
+        //     if (!MovieExists(Movie!.Id))
+        //     {
+        //         NavigationManager.NavigateTo("notfound");
+        //     }
+        //     else
+        //     {
+        //         throw;
+        //     }
+        // }
+
+        NavigationManager.NavigateTo("/customer/index");
+    }
+
+    // private bool CustomerExists(int id)
+    // {
+    //     // using var context = DbFactory.CreateDbContext();
+    //     // return context.Movie.Any(e => e.Id == id);
+    // }
+}
