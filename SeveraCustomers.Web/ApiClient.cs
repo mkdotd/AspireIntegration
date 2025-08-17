@@ -1,4 +1,7 @@
 using Models;
+using Newtonsoft.Json;
+using System.Text;
+using System.Text.Json;
 
 namespace SeveraCustomers.Web;
 
@@ -43,6 +46,10 @@ public class ApiClient(HttpClient httpClient)
 
         return customers?.ToArray() ?? [];
     }
+    public async Task<Customers?> GetCustomer(int Id) => await httpClient.GetFromJsonAsync<Customers>($"/customer/{Id}");
+
+    public async Task UpdateCustomer(int Id, Customers dto) => await httpClient.PutAsync($"/editcustomer/{Id}", new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json"));
+    public async Task CreateCustomer(Customers dto) => await httpClient.PostAsync($"/createcustomer/", new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json"));
 }
 
 public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

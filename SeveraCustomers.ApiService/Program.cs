@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models;
 using SeveraCustomers.ApiService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -51,11 +53,33 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-app.MapGet("/customers", (CustomerService service) =>
+app.MapGet("/customers", ([FromServices]CustomerService service) =>
 {
     return service.GetCustomers().ToList();
 })
 .WithName("GetCustomers");
+
+app.MapGet("/customer/{Id}", ([FromRoute]int Id, [FromServices] CustomerService service) =>
+{
+    return service.GetCustomer(Id);
+})
+.WithName("GetCustomer");
+
+app.MapPut("/editcustomer/{id}", ([FromRoute]int Id, [FromBody]Customers Dto, [FromServices] CustomerService service) =>
+{
+    var customer = service.GetCustomer(Id);
+
+    if (customer is null) return Results.NotFound();
+
+    service.UpdateCustomer(Dto);
+    return Results.NoContent();
+}).WithName("EditCustomer");
+
+app.MapPost("/createcustomer/", ([FromBody] Customers Dto, [FromServices] CustomerService service) =>
+{
+    service.CreateCustomer(Dto);
+    return Results.Created();
+}).WithName("CreateCustomer");
 
 app.MapDefaultEndpoints();
 

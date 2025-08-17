@@ -18,9 +18,9 @@ namespace SeveraCustomers.ApiService
                     ID = 1,
                     Name = "John Doe",
                     Website = "test.com",
-                    IndustryName = "Test Industry",
-                    Number = "123456789",
-                    OwnerName = "Jane Smith"
+                    IndustryName = "Technology",
+                    Number = 1234,
+                    OwnerName = "John Smith"
                 });
         }
     }

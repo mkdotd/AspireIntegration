@@ -3,12 +3,15 @@
 @* @attribute [OutputCache(Duration = 5)] *@
 
 @inject ApiClient CustomerApi
+@inject SeveraApiClient SeveraApiClient
 
 <PageTitle>Customer</PageTitle>
 
-<h1>Customer</h1>
+<h1>Customer <a class="btn btn-info float-end" href="/customer/create">Create</a><button class="btn btn-warning float-end" @onclick="LoadSeveraCustomers">Load Severa</button></h1>
 
 <p>This component demonstrates showing data loaded from a backend API service(PostGresdb).</p>
+
+<button class="btn btn-primary" @onclick="OnSimpleButtonClick">Click Me</button>
 
 @if (customers == null)
 {
@@ -46,6 +49,17 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var results = await SeveraApiClient.GetSeveraCustomer();
         customers = await CustomerApi.GetCustomers();
+    }
+
+    private async Task LoadSeveraCustomers()
+    {
+        var results = await SeveraApiClient.GetSeveraCustomer();
+    }
+    private void OnSimpleButtonClick()
+    {
+        // Your logic here
+        Console.WriteLine("Button was clicked!");
     }
 }

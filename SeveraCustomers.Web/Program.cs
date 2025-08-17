@@ -18,6 +18,13 @@ builder.Services.AddHttpClient<ApiClient>(client =>
         client.BaseAddress = new("https+http://apiservice");
     });
 
+builder.Services.AddHttpClient<SeveraApiClient>(client =>
+{
+    // This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+    // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+    client.BaseAddress = new("https://api.severa.visma.com/rest-api/v1.0");
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
