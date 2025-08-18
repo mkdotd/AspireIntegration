@@ -1,10 +1,11 @@
+using Microsoft.Extensions.Options;
 using Models;
 using Newtonsoft.Json;
 using System.Text;
 
 namespace SeveraCustomers.Web;
 
-public class SeveraApiClient(HttpClient httpClient)
+public class SeveraApiClient(HttpClient httpClient, IOptions<APIConfiguration> config)
 {
     private AccessBearerToken? _accessToken;
     private DateTime _sessionExpiry;
@@ -26,9 +27,9 @@ public class SeveraApiClient(HttpClient httpClient)
     {
         var requestBody = new
         {
-            client_Id = "",
-            client_Secret = "",
-            scope = ""
+            client_Id = config.Value.ClientID,
+            client_Secret = config.Value.ClientSecret,
+            scope = "customers:read,customers:write,customers:delete"
         };
 
         var response = await httpClient.PostAsJsonAsync(BaseUrl+"/token", requestBody);

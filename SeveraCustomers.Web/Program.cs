@@ -1,3 +1,4 @@
+using Models;
 using SeveraCustomers.Web;
 using SeveraCustomers.Web.Components;
 
@@ -25,6 +26,9 @@ builder.Services.AddSingleton<SeveraApiClient>();
 //    // Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
 //    client.BaseAddress = new("https://api.severa.visma.com/rest-api/v1.0");
 //});
+
+builder.Services.Configure<APIConfiguration>(
+    builder.Configuration.GetSection("ApiSettings"));
 
 var app = builder.Build();
 
