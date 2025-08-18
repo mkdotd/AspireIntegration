@@ -17,6 +17,11 @@ namespace SeveraCustomers.ApiService
             return _context.Customers.FirstOrDefault(c => c.ID == Id);
         }
 
+        public bool SeveraCustomerExists(Guid Id)
+        {
+            return _context.Customers.Any(c => c.Guid == Id);
+        }
+
         public void UpdateCustomer(Customers customer)
         {
             var rec = _context.Customers.FirstOrDefault(c => c.ID == customer.ID);
@@ -28,6 +33,7 @@ namespace SeveraCustomers.ApiService
                 rec.IndustryName = customer.IndustryName;
                 rec.Name = customer.Name;
                 rec.Website = customer.Website;
+                rec.Guid = customer.Guid;
 
                 _context.Update(rec);
                 _context.SaveChanges();

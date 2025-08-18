@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace SeveraCustomers.Web;
 
-public class ApiClient(HttpClient httpClient)
+public class ApiClient(HttpClient httpClient, SeveraApiClient severaApiClient)
 {
     public async Task<WeatherForecast[]> GetWeatherAsync(int maxItems = 10, CancellationToken cancellationToken = default)
     {
@@ -50,6 +50,7 @@ public class ApiClient(HttpClient httpClient)
 
     public async Task UpdateCustomer(int Id, Customers dto) => await httpClient.PutAsync($"/editcustomer/{Id}", new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json"));
     public async Task CreateCustomer(Customers dto) => await httpClient.PostAsync($"/createcustomer/", new StringContent(JsonConvert.SerializeObject(dto), Encoding.UTF8, "application/json"));
+    public async Task<bool> SeveraCustomerExists(Guid id) => await httpClient.GetFromJsonAsync<bool>($"/severacustomerexists/{id}");
 }
 
 public record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)

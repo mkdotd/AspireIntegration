@@ -1,11 +1,15 @@
 ﻿@page "/customer/edit"
+@rendermode InteractiveServer
+
 @using Models
 @inject NavigationManager NavigationManager
 @inject ApiClient CustomerApi
+@inject SeveraApiClient SeveraApiClient
 
 <PageTitle>Edit</PageTitle>
 
 <h1>Edit Customer <a class="btn btn-info float-end" href="/customer/index">Back to List</a></h1>
+
 
 <hr />
 @if (Customer is null)
@@ -14,6 +18,7 @@
 }
 else
 {
+    
     <div class="row">
         <div class="col-md-4">
             <EditForm method="post" Model="Customer" OnValidSubmit="UpdateCustomer" FormName="edit" Enhance>
@@ -45,7 +50,22 @@ else
                     <InputText id="IndustryName" @bind-Value="Customer.IndustryName" class="form-control" />
                     <ValidationMessage For="() => Customer.IndustryName" class="text-danger" />
                 </div>
+                @if(!Customer.IsSeveraRecord)
+                {
                 <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-info" @onclick="PostToSevera">Post to Severa</button>
+                }
+                else
+                {
+                    @* <div class="mb-3">
+                        <label for="IndustryName" class="form-label">Severa ID:</label>
+                        <input type="text" readonly value="@Customer.Guid" class="form-control" />
+                    </div> *@
+                    <div class="alert alert-info" role="alert">Severa customer information cannot be edited</div>
+                    <button disabled class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-info" @onclick="DeleteFromSevera">Delete From Severa</button>
+                }
+                
             </EditForm>
         </div>
     </div>
@@ -71,9 +91,39 @@ else
             NavigationManager.NavigateTo("/customer/index");
         }
     }
+    private async Task PostToSevera()
+    {
+        try
+        {
+            var id = await SeveraApiClient.PostToSevera(Customer);
+            Customer.Guid = id;
+            await UpdateCustomer();
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/customer/index");
+        }
 
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more information, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+        NavigationManager.NavigateTo("/customer/index");
+    }
+    private async Task DeleteFromSevera()
+    {
+        try
+        {
+            if(Customer?.Guid is not null)
+            {
+                await SeveraApiClient.DeleteSeveraCustomer(Customer.Guid.Value);
+                Customer.Guid = null;
+                await UpdateCustomer();
+            }
+        }
+        catch (Exception ex)
+        {
+            NavigationManager.NavigateTo("/customer/index");
+        }
+
+        NavigationManager.NavigateTo("/customer/index");
+    }
     private async Task UpdateCustomer()
     {
         try

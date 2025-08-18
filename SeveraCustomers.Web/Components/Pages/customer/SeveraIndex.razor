@@ -1,0 +1,87 @@
+﻿@page "/severacustomer/index"
+@attribute [StreamRendering(true)]
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+@inject ApiClient CustomerApi
+@inject SeveraApiClient SeveraApiClient
+
+<PageTitle>Severa Customer</PageTitle>
+
+@if(ShowAlert)
+{
+    <div class="alert alert-primary fade-in" role="alert">
+        @AlertContent
+    </div>
+}
+
+<p>This component demonstrates showing data loaded from a backend API service(Severa customers).</p>
+
+@if (customers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Number</th>
+                <th>Owner Name</th>
+                <th>Industry name</th>
+                <th>Website</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.Name</td>
+                    <td>@customer.Number</td>
+                    <td>@customer.OwnerName</td>
+                    <td>@customer.IndustryName</td>
+                    <td>@customer.Website</td>
+                    <td><button class="btn btn-primary" @onclick="() => SyncToLocal(customer)">Sync to Local</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private bool ShowAlert { get; set; }
+    private string AlertContent { get; set; }
+    private Models.Customers[]? customers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (customers == null)
+        {
+            customers = await SeveraApiClient.GetSeveraCustomer();
+        }
+    }
+
+    private async Task SyncToLocal(Models.Customers? customer)
+    {
+        try
+        {
+            if (customer.Guid.HasValue && !await CustomerApi.SeveraCustomerExists(customer.Guid.Value))
+            {
+                await CustomerApi.CreateCustomer(customer);
+                ShowAlert = true;
+                AlertContent = "Sync successfull for "+ customer.Name;
+            } else
+            {
+                ShowAlert = true;
+                AlertContent = "Record already exists for "+ customer.Name;
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowAlert = true;
+            AlertContent = "Oops! Something went wrong";
+        }
+    }
+}

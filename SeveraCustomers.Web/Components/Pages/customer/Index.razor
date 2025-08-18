@@ -7,11 +7,10 @@
 
 <PageTitle>Customer</PageTitle>
 
-<h1>Customer <a class="btn btn-info float-end" href="/customer/create">Create</a><button class="btn btn-warning float-end" @onclick="LoadSeveraCustomers">Load Severa</button></h1>
+<h1>Customer <a class="btn btn-info float-end" href="/customer/create">Create</a></h1>
 
 <p>This component demonstrates showing data loaded from a backend API service(PostGresdb).</p>
 
-<button class="btn btn-primary" @onclick="OnSimpleButtonClick">Click Me</button>
 
 @if (customers == null)
 {
@@ -23,8 +22,9 @@ else
         <thead>
             <tr>
                 <th>Name</th>
-                <th>OwnerName</th>
                 <th>Number</th>
+                <th>Owner Name</th>
+                <th>Industry name</th>
                 <th>Website</th>
                 <th></th>
             </tr>
@@ -34,8 +34,9 @@ else
             {
                 <tr>
                     <td>@customer.Name</td>
-                    <td>@customer.OwnerName</td>
                     <td>@customer.Number</td>
+                    <td>@customer.OwnerName</td>
+                    <td>@customer.IndustryName</td>
                     <td>@customer.Website</td>
                     <td><a href="@($"customer/edit?id={customer.ID}")">Edit</a></td>
                 </tr>
@@ -49,17 +50,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var results = await SeveraApiClient.GetSeveraCustomer();
-        customers = await CustomerApi.GetCustomers();
-    }
-
-    private async Task LoadSeveraCustomers()
-    {
-        var results = await SeveraApiClient.GetSeveraCustomer();
-    }
-    private void OnSimpleButtonClick()
-    {
-        // Your logic here
-        Console.WriteLine("Button was clicked!");
+        if (customers == null)
+        {
+            customers = await CustomerApi.GetCustomers();
+        }
     }
 }

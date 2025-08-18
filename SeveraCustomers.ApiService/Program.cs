@@ -81,6 +81,12 @@ app.MapPost("/createcustomer/", ([FromBody] Customers Dto, [FromServices] Custom
     return Results.Created();
 }).WithName("CreateCustomer");
 
+app.MapGet("/severacustomerexists/{Id}", ([FromRoute] Guid Id, [FromServices] CustomerService service) =>
+{
+    return service.SeveraCustomerExists(Id);
+})
+.WithName("SeveraCustomerExists");
+
 app.MapDefaultEndpoints();
 
 app.Run();
