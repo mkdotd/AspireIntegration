@@ -9,7 +9,7 @@ This repository is a Aspire .NET solution for managing(import/export) Severa cus
 - Visual Studio 2022 (or later) or Visual Studio Code
 - Access to Severa API credentials (Client ID and Client Secret)
 - Docker desktop
-- (Optional) PostgreSQL database if using a real database backend
+- (Optional-Additional configurations needed to support this) PostgreSQL database if using a real database backend
 
 
 ## Getting Started
@@ -19,14 +19,26 @@ This repository is a Aspire .NET solution for managing(import/export) Severa cus
 	git clone https://github.com/mkdotd/AspireIntegration.git
 	cd AspireIntegration
 	```
-2. **Open the solution in Visual Studio**
+ 2. **Configure the client secrets:**
+	```powershell
+	cd SeveraCustomers.Web
+	dotnet user-secrets set "ApiSettings:ClientId" "replace this with clientId"
+ 	dotnet user-secrets set "ApiSettings:ClientSecret" "replace this with clientSecret"
+	```
+3. **Open the solution in Visual Studio**
 
-3. **Run the project:**
+4. **Run the project:**
 	```powershell
 	Set SeveraCustomers.AppHost as startup project to enable orchestration and run the project
+	```
+ 5. **(Optional) Cleanup of user secrets for the project:**
+	```powershell
+	cd SeveraCustomers.Web
+ 	dotnet user-secrets clear
 	```
 
 ## Configuration
 
 - Severa client ID and Severa client secret should be configured to access the severa services.
+
 
