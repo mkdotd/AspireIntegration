@@ -28,9 +28,10 @@ This repository is a Aspire .NET solution for managing(import/export) Severa cus
 3. **Open the solution in Visual Studio**
 
 4. **Run the project:**
-	```powershell
-	Set SeveraCustomers.AppHost as startup project to enable orchestration and run the project
-	```
+
+ 	- Ensure Docker desktop is running
+	- Set SeveraCustomers.AppHost as startup project to enable orchestration and run the project
+
  5. **(Optional) Cleanup of user secrets for the project:**
 	```powershell
 	cd SeveraCustomers.Web
@@ -40,5 +41,6 @@ This repository is a Aspire .NET solution for managing(import/export) Severa cus
 ## Configuration
 
 - Severa client ID and Severa client secret should be configured to access the severa services.
+
 
 
