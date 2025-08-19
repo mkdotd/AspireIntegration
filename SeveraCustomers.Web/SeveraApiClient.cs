@@ -40,7 +40,7 @@ public class SeveraApiClient(HttpClient httpClient, IOptions<APIConfiguration> c
         return session ?? throw new InvalidOperationException("Failed to fetch session.");
     }
 
-    private async Task<T?> GetWithSessionAsync<T, V>(string url) where V : JsonConverter, new()
+    private async Task<(T?, string?)> GetWithSessionAsync<T, V>(string url) where V : JsonConverter, new()
     {
         var session = await GetSessionAsync();
         var request = new HttpRequestMessage(HttpMethod.Get, BaseUrl+url);
@@ -50,7 +50,12 @@ public class SeveraApiClient(HttpClient httpClient, IOptions<APIConfiguration> c
         response.EnsureSuccessStatusCode();
         var json = await response.Content.ReadAsStringAsync();
         var resultData = JsonConvert.DeserializeObject<T>(json, new V());
-        return resultData;
+
+        string? nextPageToken = null;
+        if (response.Headers.TryGetValues("NextPageToken", out var values))
+            nextPageToken = values.FirstOrDefault();
+
+        return (resultData, nextPageToken);
     }
 
     private async Task<T?> PostWithSessionAsync<T, V>(string url, T obj) where V : JsonConverter, new()
@@ -75,7 +80,8 @@ public class SeveraApiClient(HttpClient httpClient, IOptions<APIConfiguration> c
         response.EnsureSuccessStatusCode();
     }
 
-    public async Task<Customers[]?> GetSeveraCustomer() => await GetWithSessionAsync<Customers[], CustomersJsonConverter>($"/customers");
+    public async Task<(Customers[]?, string?)> GetSeveraCustomer(int rowCount) => await GetWithSessionAsync<Customers[], CustomersJsonConverter>($"/customers?rowCount={rowCount}");
+    public async Task<(Customers[]?, string?)> GetSeveraCustomer(int rowCount, string nextToken) => await GetWithSessionAsync<Customers[], CustomersJsonConverter>($"/customers?rowCount={rowCount}&pageToken={nextToken}");
     public async Task<Guid> PostToSevera(Customers dto)
     {
         var response = await PostWithSessionAsync<Customers, CustomersJsonConverter>($"/customers", dto);
