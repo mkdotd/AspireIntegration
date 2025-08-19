@@ -42,5 +42,7 @@ This repository is a Aspire .NET solution for managing(import/export) Severa cus
 
 - Severa client ID and Severa client secret should be configured to access the severa services.
 
+## Logging
 
+- Uses open telemetry built into default aspire hosting project for logging
 
