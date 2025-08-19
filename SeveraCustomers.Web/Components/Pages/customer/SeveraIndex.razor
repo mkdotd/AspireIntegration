@@ -16,6 +16,7 @@
 }
 
 <p>This component demonstrates showing data loaded from a backend API service(Severa customers).</p>
+<h1><button class="btn btn-primary" disabled="@string.IsNullOrEmpty(PageToken)" @onclick=FetchNextPage>Next</button></h1>
 
 @if (customers == null)
 {
@@ -51,15 +52,43 @@ else
 }
 
 @code {
+    private string? PageToken { get; set; }
+    private int RowCount = 5;
     private bool ShowAlert { get; set; }
-    private string AlertContent { get; set; }
+    private string? AlertContent { get; set; }
     private Models.Customers[]? customers;
+    private string? MoreRecordsExists = "btn btn-secondary";
 
     protected override async Task OnInitializedAsync()
     {
         if (customers == null)
         {
-            customers = await SeveraApiClient.GetSeveraCustomer();
+            (customers, PageToken) = await SeveraApiClient.GetSeveraCustomer(RowCount);
+            if (string.IsNullOrEmpty(PageToken))
+            {
+                MoreRecordsExists = "btn btn-secondary";
+            }
+        }
+    }
+
+    private async Task FetchNextPage()
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(PageToken))
+            {
+                (customers, PageToken) = await SeveraApiClient.GetSeveraCustomer(RowCount, PageToken);
+            }
+            else
+            {
+                ShowAlert = true;
+                AlertContent = "No more records to show";
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowAlert = true;
+            AlertContent = "Oops! Something went wrong";
         }
     }
 
