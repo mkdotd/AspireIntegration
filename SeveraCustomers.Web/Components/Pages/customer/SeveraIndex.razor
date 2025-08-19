@@ -1,6 +1,7 @@
 ﻿@page "/severacustomer/index"
 @attribute [StreamRendering(true)]
 @inject NavigationManager NavigationManager
+@inject ILogger<SeveraIndex> Logger
 @rendermode InteractiveServer
 
 @inject ApiClient CustomerApi
@@ -57,17 +58,12 @@ else
     private bool ShowAlert { get; set; }
     private string? AlertContent { get; set; }
     private Models.Customers[]? customers;
-    private string? MoreRecordsExists = "btn btn-secondary";
 
     protected override async Task OnInitializedAsync()
     {
         if (customers == null)
         {
             (customers, PageToken) = await SeveraApiClient.GetSeveraCustomer(RowCount);
-            if (string.IsNullOrEmpty(PageToken))
-            {
-                MoreRecordsExists = "btn btn-secondary";
-            }
         }
     }
 
@@ -78,17 +74,17 @@ else
             if (!string.IsNullOrEmpty(PageToken))
             {
                 (customers, PageToken) = await SeveraApiClient.GetSeveraCustomer(RowCount, PageToken);
-            }
-            else
-            {
-                ShowAlert = true;
-                AlertContent = "No more records to show";
+                if (string.IsNullOrEmpty(PageToken))
+                {
+                    Logger.LogWarning("No more records to fetch from Severa API");
+                }
             }
         }
         catch (Exception ex)
         {
             ShowAlert = true;
             AlertContent = "Oops! Something went wrong";
+            Logger.LogError("Something went wrong" + ex.Message);
         }
     }
 
@@ -105,12 +101,14 @@ else
             {
                 ShowAlert = true;
                 AlertContent = "Record already exists for "+ customer.Name;
+                Logger.LogError("Record already exists. Cannot sync" + customer.Name);
             }
         }
         catch (Exception ex)
         {
             ShowAlert = true;
             AlertContent = "Oops! Something went wrong";
+            Logger.LogError("Something went wrong" + ex.Message);
         }
     }
 }
